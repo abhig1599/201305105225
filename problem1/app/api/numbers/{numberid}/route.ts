@@ -5,17 +5,16 @@ const app = express();
 let numbers = [];
 const windowSize = 10;
 
-app.use(async (req, res, next) => {
+app.use('/numbers/:numberid', async (req, res, next) => {
   const numberId = req.params.numberid;
   const startTime = Date.now();
 
-  // Check if numberId is valid
   if (!['p', 'f', 'e', 'F'].includes(numberId)) {
     return res.status(400).json({ error: 'Invalid numberId' });
   }
 
   try {
-    const response = await axios.get(`http://localhost:3000/numbers/${numberId}`);
+    const response = await axios.get(`http://20.244.56.144/test/${numberId}`);
     const responseTime = Date.now() - startTime;
 
     if (responseTime > 500) {
@@ -32,7 +31,7 @@ app.use(async (req, res, next) => {
       numbers.shift();
     }
 
-    req.numbers = numbers;
+    req.numbers = numbers.slice();
     req.number = number;
     req.avg = numbers.reduce((a, b) => a + b, 0) / numbers.length;
 
@@ -42,11 +41,11 @@ app.use(async (req, res, next) => {
   }
 });
 
-app.get('/numbers/:numberid', (req, res) => {
+app.get('/ /:numberid', (req, res) => {
   res.json({
     windowPrevState: req.numbers.slice(0, -1),
     windowCurrState: req.numbers,
-    numbers: req.number,
+    number: req.number,
     avg: req.avg.toFixed(2),
   });
 });
